@@ -1,0 +1,110 @@
+# Blender MTL File: 'Steve Rig.blend'
+# Material Count: 11
+
+newmtl Body
+Ns 35.294118
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.316667 0.316667 0.316667
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\Animation\Rigs - Backup\char.png
+
+newmtl Body_NONE
+Ns 35.294118
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.316667 0.316667 0.316667
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\\Animation\\Rigs - Backup\\char.png
+
+newmtl Body_face.png
+Ns 35.294118
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.316667 0.316667 0.316667
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\Animation\Rigs - Backup\face.png
+
+newmtl Eye2
+Ns 158.823529
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.275000 0.275000 0.275000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\Animation\Rigs - Backup\teeth&eyes.png
+
+newmtl Eyebrows
+Ns 60.784314
+Ka 0.000000 0.000000 0.000000
+Kd 0.031742 0.031742 0.031742
+Ks 0.016667 0.016667 0.016667
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\Animation\Rigs - Backup\untitled.png
+
+newmtl Eyes_&_Teeth
+Ns 152.941176
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\\Animation\\Rigs - Backup\\teeth&eyes.png
+
+newmtl Face
+Ns 47.058824
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.333333 0.333333 0.333333
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\Animation\Rigs - Backup\char.png
+
+newmtl Face_face.png
+Ns 47.058824
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.333333 0.333333 0.333333
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\Animation\Rigs - Backup\face.png
+
+newmtl Material
+Ns 19.607843
+Ka 0.000000 0.000000 0.000000
+Kd 0.002063 0.002063 0.002063
+Ks 0.015950 0.015950 0.015950
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\Animation\Rigs - Backup\untitled.png
+
+newmtl Mouth
+Ns 260.784314
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\Animation\Rigs - Backup\Mouth.png
+
+newmtl None
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
