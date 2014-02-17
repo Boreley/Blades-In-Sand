@@ -5,116 +5,115 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.Font;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
 
-import de.matthiasmann.twl.utils.PNGDecoder;
 import utility.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.text.DecimalFormat;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 
-public class bis_Display extends EulerCamera{
+public class bis_Display {
 
-    private static Camera camera;
-    private static float[] lightPosition = {-0.00f, 0.00f, 0.00f, 1f};
-    private static int bunnyDisplayList;
+    private static UnicodeFont font;
+    private static final DecimalFormat formatter = new DecimalFormat("#.##");
+    private static Model model;
+
+    private static EulerCamera cam;
+    private static int shaderProgram;
+    private static int vboVertexHandle;
+    private static int vboNormalHandle;
+
+    private static final FloatBuffer perspectiveProjectionMatrix = BufferTools.reserveData(16);
+    private static final FloatBuffer orthographicProjectionMatrix = BufferTools.reserveData(16);
 
     private static final String MODEL_LOCATION = "res/models/bunny.obj";
+    private static final String VERTEX_SHADER_LOCATION = "res/shaders/vertex_phong_lighting.vs";
+    private static final String FRAGMENT_SHADER_LOCATION = "res/shaders/vertex_phong_lighting.fs";
+    private static final int DISPLAY_WIDTH = 640;
+    private static final int DISPLAY_HEIGHT = 480;
 
     public static void main(String[] args) {
         setUpDisplay();
-        setUpDisplayLists();
+        setUpFonts();
+        setUpVBOs();
         setUpCamera();
+        setUpShaders();
         setUpLighting();
         while (!Display.isCloseRequested()) {
             render();
-            renderText();
             checkInput();
-            System.err.println(x + ", " + y + ", " + z);
             Display.update();
-            Display.sync(60);
         }
         cleanUp();
         System.exit(0);
     }
 
-    private static void setUpDisplayLists() {
-        bunnyDisplayList = glGenLists(1);
-        glNewList(bunnyDisplayList, GL_COMPILE);
-        {
-            Model m = null;
-            try {
-                m = OBJLoader.loadModel(new File(MODEL_LOCATION));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Display.destroy();
-                System.exit(1);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Display.destroy();
-                System.exit(1);
-            }
-            glColor3f(0.4f, 0.27f, 0.17f);
-            glBegin(GL_TRIANGLES);
-            for (Model.Face face : m.getFaces()) {
-                Vector3f n1 = m.getNormals().get(face.getNormalIndices()[0] - 1);
-                glNormal3f(n1.x, n1.y, n1.z);
-                Vector3f v1 = m.getVertices().get(face.getVertexIndices()[0] - 1);
-                glVertex3f(v1.x, v1.y, v1.z);
-                Vector3f n2 = m.getNormals().get(face.getNormalIndices()[1] - 1);
-                glNormal3f(n2.x, n2.y, n2.z);
-                Vector3f v2 = m.getVertices().get(face.getVertexIndices()[1] - 1);
-                glVertex3f(v2.x, v2.y, v2.z);
-                Vector3f n3 = m.getNormals().get(face.getNormalIndices()[2] - 1);
-                glNormal3f(n3.x, n3.y, n3.z);
-                Vector3f v3 = m.getVertices().get(face.getVertexIndices()[2] - 1);
-                glVertex3f(v3.x, v3.y, v3.z);
-            }
-            glEnd();
-        }
-        glEndList();
-    }
-
-    private static void checkInput() {
-        camera.processMouse(1, 80, -80);
-        camera.processKeyboard(16, 1, 1, 1);
-        glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(lightPosition));
-        if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
-            lightPosition = new float[]{camera.x(), camera.y(), camera.z(), 1};
-        }
-        if (Mouse.isButtonDown(0)) {
-            Mouse.setGrabbed(true);
-        } else if (Mouse.isButtonDown(1)) {
-            Mouse.setGrabbed(false);
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
-        	Display.destroy();
-        	System.exit(0);
-        }
-    }
-
-    private static void cleanUp() {
-        glDeleteLists(bunnyDisplayList, 1);
-        Display.destroy();
-    }
-
     private static void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-        camera.applyTranslations();
-        glCallList(bunnyDisplayList);
+        cam.applyTranslations();
+        glUseProgram(shaderProgram);
+        glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(cam.x(), cam.y(), cam.z(), 1));
+        glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
+        glVertexPointer(3, GL_FLOAT, 0, 0L);
+        glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle);
+        glNormalPointer(GL_FLOAT, 0, 0L);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glColor3f(0.4f, 0.27f, 0.17f);
+        glMaterialf(GL_FRONT, GL_SHININESS, 10f);
+        glDrawArrays(GL_TRIANGLES, 0, model.getFaces().size() * 3);
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glUseProgram(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrix(orthographicProjectionMatrix);
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+        glDisable(GL_LIGHTING);
+        font.drawString(10, 10, "Tri-Ordinates: x=" + formatter.format(cam.x()) +
+                ", y=" + formatter.format(cam.y()) + ", z=" + formatter.format(cam.z()) + "");
+        glEnable(GL_LIGHTING);
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrix(perspectiveProjectionMatrix);
+        glMatrixMode(GL_MODELVIEW);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void setUpFonts() {
+        java.awt.Font awtFont = new java.awt.Font("res/font/Francois One.ttf", java.awt.Font.BOLD, 18);
+        font = new UnicodeFont(awtFont);
+        font.getEffects().add(new ColorEffect(java.awt.Color.white));
+        font.addAsciiGlyphs();
+        try {
+            font.loadGlyphs();
+        } catch (SlickException e) {
+            e.printStackTrace();
+            cleanUp();
+        }
     }
 
     private static void setUpLighting() {
         glShadeModel(GL_SMOOTH);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_LIGHT0);
         glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.05f, 0.05f, 0.05f, 1f}));
         glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{0, 0, 0, 1}));
@@ -124,16 +123,60 @@ public class bis_Display extends EulerCamera{
         glColorMaterial(GL_FRONT, GL_DIFFUSE);
     }
 
+    private static void setUpVBOs() {
+        vboVertexHandle = glGenBuffers();
+        vboNormalHandle = glGenBuffers();
+        model = null;
+        try {
+            model = OBJLoader.loadModel(new File(MODEL_LOCATION));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            cleanUp();
+            System.exit(1);
+        } catch (IOException e) {
+            e.printStackTrace();
+            cleanUp();
+            System.exit(1);
+        }
+        FloatBuffer vertices = BufferTools.reserveData(model.getFaces().size() * 9);
+        FloatBuffer normals = BufferTools.reserveData(model.getFaces().size() * 9);
+        for (Model.Face face : model.getFaces()) {
+            vertices.put(BufferTools.asFloats(model.getVertices().get(face.getVertexIndices()[0] - 1)));
+            vertices.put(BufferTools.asFloats(model.getVertices().get(face.getVertexIndices()[1] - 1)));
+            vertices.put(BufferTools.asFloats(model.getVertices().get(face.getVertexIndices()[2] - 1)));
+            normals.put(BufferTools.asFloats(model.getNormals().get(face.getNormalIndices()[0] - 1)));
+            normals.put(BufferTools.asFloats(model.getNormals().get(face.getNormalIndices()[1] - 1)));
+            normals.put(BufferTools.asFloats(model.getNormals().get(face.getNormalIndices()[2] - 1)));
+        }
+        vertices.flip();
+        normals.flip();
+        glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle);
+        glBufferData(GL_ARRAY_BUFFER, normals, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    private static void setUpShaders() {
+        shaderProgram = ShaderLoader.loadShaderPair(VERTEX_SHADER_LOCATION, FRAGMENT_SHADER_LOCATION);
+    }
+
     private static void setUpCamera() {
-        camera = new EulerCamera.Builder().setAspectRatio((float) Display.getWidth() / Display.getHeight())
-                .setPosition(-2.19f, 1.36f, 11.45f).setFieldOfView(70).build();
-        camera.applyOptimalStates();
-        camera.applyPerspectiveMatrix();
+        cam = new EulerCamera((float) Display.getWidth() / (float) Display.getHeight(), -2.19f, 1.36f, 11.45f);
+        cam.setFieldOfView(70);
+        cam.applyPerspectiveMatrix();
+        glGetFloat(GL_PROJECTION_MATRIX, perspectiveProjectionMatrix);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+        glGetFloat(GL_PROJECTION_MATRIX, orthographicProjectionMatrix);
+        glLoadMatrix(perspectiveProjectionMatrix);
+        glMatrixMode(GL_MODELVIEW);
     }
 
     private static void setUpDisplay() {
         try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
+            Display.setDisplayMode(new DisplayMode(DISPLAY_WIDTH, DISPLAY_HEIGHT));
             Display.setVSyncEnabled(true);
             Display.setTitle("Blades In Sand");
             Display.create();
@@ -143,10 +186,26 @@ public class bis_Display extends EulerCamera{
             System.exit(1);
         }
     }
-    
-    private static void renderText(){
-    	glColor3f(1,1,1);
-    	SimpleText.drawString("Tri-Ordinates: " + x + ", " + y + ", "+z, 0, 0);
+
+    private static void checkInput() {
+        cam.processMouse(1, 80, -80);
+        cam.processKeyboard(16, 1, 1, 1);
+        if (Mouse.isButtonDown(0)) {
+            Mouse.setGrabbed(true);
+        } else if (Mouse.isButtonDown(1)) {
+            Mouse.setGrabbed(false);
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+        	Display.destroy();
+        	System.exit(0);
+        }
     }
 
+    private static void cleanUp() {
+        glDeleteProgram(shaderProgram);
+        glDeleteBuffers(vboVertexHandle);
+        glDeleteBuffers(vboNormalHandle);
+        Display.destroy();
+        System.exit(0);
+    }
 }

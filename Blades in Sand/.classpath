@@ -12,6 +12,14 @@
 	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/lwjgl_util.jar"/>
 	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/slick-util.jar"/>
 	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/PNGDecoder.jar"/>
-	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/slick.zip"/>
+	<classpathentry kind="lib" path="libs/jars/slick.jar"/>
+	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/jbox2d-library-2.1.2.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/jbullet.jar"/>
+	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/jdom-1.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/jinput.jar"/>
+	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/slf4j-api-1.6.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/slf4j-simple-1.6.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/slick.jar"/>
+	<classpathentry kind="lib" path="C:/Users/casey_000/git/WarKry/Blades in Sand/libs/jars/vecmath.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
