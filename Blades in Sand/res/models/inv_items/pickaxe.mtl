@@ -1,0 +1,71 @@
+# Blender MTL File: 'pickaxe.blend'
+# Material Count: 7
+
+newmtl Car
+Ns 80.392157
+Ka 0.000000 0.000000 0.000000
+Kd 0.441921 0.441921 0.441921
+Ks 0.211226 0.211226 0.211226
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\casey_000\\Downloads\\textures\\minecar_spec.png
+map_Kd C:\\Users\\casey_000\\Downloads\\textures\\minecar.png
+
+newmtl Gold
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.323523 0.161284 0.098927
+Ks 0.904283 0.904283 0.904283
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.277958 0.258388 0.258388
+Ks 0.442245 0.442245 0.442245
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Rails
+Ns 325.490196
+Ka 0.000000 0.000000 0.000000
+Kd 0.407982 0.401376 0.407986
+Ks 1.566839 1.566839 1.566839
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Rock
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.478287 0.478287 0.478287
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump \\home\\kwitters\\projects\\dewitters\\geem\\rocktexture.jpg
+map_Kd \\home\\kwitters\\projects\\dewitters\\geem\\rocktexture.jpg
+
+newmtl Wheel
+Ns 166.666667
+Ka 0.000000 0.000000 0.000000
+Kd 0.466367 0.443634 0.449179
+Ks 1.019793 1.019793 1.019793
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl railwood
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.442091 0.296661 0.188517
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump \\home\\kwitters\\tmp\\downloads\\blender\\fs1205-sc.jpg
+map_Kd \\home\\kwitters\\tmp\\downloads\\blender\\fs1205-sc.jpg

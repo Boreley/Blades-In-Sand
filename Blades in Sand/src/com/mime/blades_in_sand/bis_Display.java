@@ -6,18 +6,23 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
+
+import de.matthiasmann.twl.utils.PNGDecoder;
 import utility.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class bis_Display extends EulerCamera{
 
     private static Camera camera;
-    private static float[] lightPosition = {-2.19f, 1.36f, 11.45f, 1f};
+    private static float[] lightPosition = {-0.00f, 0.00f, 0.00f, 1f};
     private static int bunnyDisplayList;
 
     private static final String MODEL_LOCATION = "res/models/bunny.obj";
@@ -29,6 +34,7 @@ public class bis_Display extends EulerCamera{
         setUpLighting();
         while (!Display.isCloseRequested()) {
             render();
+            renderText();
             checkInput();
             System.err.println(x + ", " + y + ", " + z);
             Display.update();
@@ -137,4 +143,10 @@ public class bis_Display extends EulerCamera{
             System.exit(1);
         }
     }
+    
+    private static void renderText(){
+    	glColor3f(1,1,1);
+    	SimpleText.drawString("Tri-Ordinates: " + x + ", " + y + ", "+z, 0, 0);
+    }
+
 }
